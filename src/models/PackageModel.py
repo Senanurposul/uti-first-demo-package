@@ -1,11 +1,5 @@
-
-from pydantic import Field, validator
-from typing import List, Optional, Union, Literal
-from sdks.novavision.src.base.model import Package, Image, Inputs, Configs, Outputs, Response, Request, Output, Input, Config
-
-
-class InputImage(Input):
-    name: Literal["inputImage"] = "inputImage"
+class InputImageTwo(Input):
+    name: Literal["inputImageTwo"] = "inputImageTwo"
     value: Union[List[Image], Image]
     type: str = "object"
 
@@ -16,14 +10,15 @@ class InputImage(Input):
             return "object"
         elif isinstance(value, list):
             return "list"
+        return "object"
 
     class Config:
         title = "Image"
 
 
-class OutputImage(Output):
-    name: Literal["outputImage"] = "outputImage"
-    value: Union[List[Image],Image]
+class InputImageOne(Input):
+    name: Literal["inputImageOne"] = "inputImageOne"
+    value: Union[List[Image], Image]
     type: str = "object"
 
     @validator("type", pre=True, always=True)
@@ -33,23 +28,70 @@ class OutputImage(Output):
             return "object"
         elif isinstance(value, list):
             return "list"
+        return "object"
 
     class Config:
         title = "Image"
 
 
-class KeepSideFalse(Config):
-    name: Literal["False"] = "False"
-    value: Literal[False] = False
-    type: Literal["bool"] = "bool"
-    field: Literal["option"] = "option"
+class OutputImageTwo(Output):
+    name: Literal["outputImageTwo"] = "outputImageTwo"
+    value: Union[List[Image], Image]
+    type: str = "object"
+
+    @validator("type", pre=True, always=True)
+    def set_type_based_on_value(cls, value, values):
+        value = values.get('value')
+        if isinstance(value, Image):
+            return "object"
+        elif isinstance(value, list):
+            return "list"
+        return "object"
 
     class Config:
-        title = "Disable"
+        title = "Image"
 
 
-class KeepSideTrue(Config):
-    name: Literal["True"] = "True"
+class OutputImageOne(Output):
+    name: Literal["outputImageOne"] = "outputImageOne"
+    value: Union[List[Image], Image]
+    type: str = "object"
+
+    @validator("type", pre=True, always=True)
+    def set_type_based_on_value(cls, value, values):
+        value = values.get('value')
+        if isinstance(value, Image):
+            return "object"
+        elif isinstance(value, list):
+            return "list"
+        return "object"
+
+    class Config:
+        title = "Image"
+
+
+class ThresholdValue(Config):
+    name: Literal["ThresholdValue"] = "ThresholdValue"
+    value: int = Field(default=127, ge=0, le=255)
+    type: Literal["number"] = "number"
+    field: Literal["textInput"] = "textInput"
+
+    class Config:
+        title = "Threshold Value"
+
+
+class Alpha(Config):
+    name: Literal["Alpha"] = "Alpha"
+    value: float
+    type: Literal["number"] = "number"
+    field: Literal["textInput"] = "textInput"
+
+    class Config:
+        title = "Alpha"
+
+
+class OptionEnable(Config):
+    name: Literal["OptionEnable"] = "OptionEnable"
     value: Literal[True] = True
     type: Literal["bool"] = "bool"
     field: Literal["option"] = "option"
@@ -58,49 +100,84 @@ class KeepSideTrue(Config):
         title = "Enable"
 
 
-class KeepSideBBox(Config):
-    """
-        Rotate image without catting off sides.
-    """
-    name: Literal["KeepSide"] = "KeepSide"
-    value: Union[KeepSideTrue, KeepSideFalse]
+class OptionDisable(Config):
+    name: Literal["OptionDisable"] = "OptionDisable"
+    value: Literal[False] = False
+    type: Literal["bool"] = "bool"
+    field: Literal["option"] = "option"
+
+    class Config:
+        title = "Disable"
+
+
+class Invert(Config):
+    name: Literal["Invert"] = "Invert"
+    value: Union[OptionEnable, OptionDisable]
     type: Literal["object"] = "object"
     field: Literal["dropdownlist"] = "dropdownlist"
 
     class Config:
-        title = "Keep Sides"
+        title = "Invert"
 
 
-class Degree(Config):
-    """
-        Positive angles specify counterclockwise rotation while negative angles indicate clockwise rotation.
-    """
-    name: Literal["Degree"] = "Degree"
-    value: int = Field(ge=-359.0, le=359.0,default=0)
-    type: Literal["number"] = "number"
-    field: Literal["textInput"] = "textInput"
-    placeHolder: Literal["[-359, 359]"] = "[-359, 359]"
+class NormalizeOutput(Config):
+    name: Literal["NormalizeOutput"] = "NormalizeOutput"
+    value: Union[OptionEnable, OptionDisable]
+    type: Literal["object"] = "object"
+    field: Literal["dropdownlist"] = "dropdownlist"
 
     class Config:
-        title = "Angle"
+        title = "Normalize Output"
 
 
-class PackageInputs(Inputs):
-    inputImage: InputImage
+class ThresholdMethod(Config):
+    thresholdValue: ThresholdValue
+    invert: Invert
+
+    name: Literal["ThresholdMethod"] = "ThresholdMethod"
+    value: Literal["Threshold"] = "Threshold"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+
+    class Config:
+        title = "Threshold"
 
 
-class PackageConfigs(Configs):
-    degree: Degree
-    drawBBox: KeepSideBBox
+class NormalizeMethod(Config):
+    alpha: Alpha
+    normalizeOutput: NormalizeOutput
+
+    name: Literal["NormalizeMethod"] = "NormalizeMethod"
+    value: Literal["Normalize"] = "Normalize"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+
+    class Config:
+        title = "Normalize"
 
 
-class PackageOutputs(Outputs):
-    outputImage: OutputImage
+class DifferenceMethod(Config):
+    name: Literal["DifferenceMethod"] = "DifferenceMethod"
+    value: Union[ThresholdMethod, NormalizeMethod]
+    type: Literal["object"] = "object"
+    field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
+
+    class Config:
+        title = "Method"
 
 
-class PackageRequest(Request):
-    inputs: Optional[PackageInputs]
-    configs: PackageConfigs
+class DifferenceExecutorInputs(Inputs):
+    inputImageOne: InputImageOne
+    inputImageTwo: InputImageTwo
+
+
+class DifferenceExecutorConfigs(Configs):
+    differenceMethod: DifferenceMethod
+
+
+class DifferenceExecutorRequest(Request):
+    inputs: Optional[DifferenceExecutorInputs]
+    configs: DifferenceExecutorConfigs
 
     class Config:
         json_schema_extra = {
@@ -108,18 +185,142 @@ class PackageRequest(Request):
         }
 
 
-class PackageResponse(Response):
-    outputs: PackageOutputs
+class DifferenceExecutorOutputs(Outputs):
+    outputImageOne: OutputImageOne
+    outputImageTwo: OutputImageTwo
 
 
-class PackageExecutor(Config):
-    name: Literal["Package"] = "Package"
-    value: Union[PackageRequest, PackageResponse]
+class DifferenceExecutorResponse(Response):
+    outputs: DifferenceExecutorOutputs
+
+
+class DifferenceExecutor(Config):
+    name: Literal["DifferenceExecutor"] = "DifferenceExecutor"
+    value: Union[DifferenceExecutorRequest, DifferenceExecutorResponse]
     type: Literal["object"] = "object"
     field: Literal["option"] = "option"
 
     class Config:
-        title = "Package"
+        title = "DifferenceExecutor"
+        json_schema_extra = {
+            "target": {
+                "value": 1
+            }
+        }
+
+
+class ScaleX(Config):
+    name: Literal["ScaleX"] = "ScaleX"
+    value: float
+    type: Literal["number"] = "number"
+    field: Literal["textInput"] = "textInput"
+
+    class Config:
+        title = "Scale X"
+
+
+class ScaleY(Config):
+    name: Literal["ScaleY"] = "ScaleY"
+    value: float
+    type: Literal["number"] = "number"
+    field: Literal["textInput"] = "textInput"
+
+    class Config:
+        title = "Scale Y"
+
+
+class Width(Config):
+    name: Literal["Width"] = "Width"
+    value: int
+    type: Literal["number"] = "number"
+    field: Literal["textInput"] = "textInput"
+
+    class Config:
+        title = "Width"
+
+
+class Height(Config):
+    name: Literal["Height"] = "Height"
+    value: int
+    type: Literal["number"] = "number"
+    field: Literal["textInput"] = "textInput"
+
+    class Config:
+        title = "Height"
+
+
+class ConfigScale(Config):
+    name: Literal["ConfigScale"] = "ConfigScale"
+
+    scaleX: ScaleX
+    scaleY: ScaleY
+
+    value: Literal["Scale"] = "Scale"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+
+    class Config:
+        title = "Scale"
+
+
+class ConfigCustomSize(Config):
+    name: Literal["ConfigCustomSize"] = "ConfigCustomSize"
+
+    width: Width
+    height: Height
+
+    value: Literal["CustomSize"] = "CustomSize"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+
+    class Config:
+        title = "Custom Size"
+
+
+class ResizeMethod(Config):
+    name: Literal["ResizeMethod"] = "ResizeMethod"
+    value: Union[ConfigScale, ConfigCustomSize]
+    type: Literal["object"] = "object"
+    field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
+
+    class Config:
+        title = "Resize Method"
+
+
+class ResizeExecutorInputs(Inputs):
+    inputImageOne: InputImageOne
+
+
+class ResizeExecutorConfigs(Configs):
+    resizeMethod: ResizeMethod
+
+
+class ResizeExecutorRequest(Request):
+    inputs: Optional[ResizeExecutorInputs]
+    configs: ResizeExecutorConfigs
+
+    class Config:
+        json_schema_extra = {
+            "target": "configs"
+        }
+
+
+class ResizeExecutorOutputs(Outputs):
+    outputImageOne: OutputImageOne
+
+
+class ResizeExecutorResponse(Response):
+    outputs: ResizeExecutorOutputs
+
+
+class ResizeExecutor(Config):
+    name: Literal["ResizeExecutor"] = "ResizeExecutor"
+    value: Union[ResizeExecutorRequest, ResizeExecutorResponse]
+    type: Literal["object"] = "object"
+    field: Literal["option"] = "option"
+
+    class Config:
+        title = "ResizeExecutor"
         json_schema_extra = {
             "target": {
                 "value": 0
@@ -129,15 +330,12 @@ class PackageExecutor(Config):
 
 class ConfigExecutor(Config):
     name: Literal["ConfigExecutor"] = "ConfigExecutor"
-    value: Union[PackageExecutor]
+    value: Union[ResizeExecutor, DifferenceExecutor]
     type: Literal["executor"] = "executor"
     field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
 
     class Config:
         title = "Task"
-        json_schema_extra = {
-            "target": "value"
-        }
 
 
 class PackageConfigs(Configs):
