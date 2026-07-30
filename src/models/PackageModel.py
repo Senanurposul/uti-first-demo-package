@@ -258,7 +258,7 @@ class DifferenceExecutorResponse(Response):
     outputs: DifferenceExecutorOutputs
 
 class DifferenceExecutorRequest(Request):
-    inputs: Optional[DifferenceExecutorInputs]
+    inputs: DifferenceExecutorInputs
     configs: DifferenceExecutorConfigs
 
     class Config:
@@ -271,7 +271,7 @@ class ResizeExecutorResponse(Response):
     outputs: ResizeExecutorOutputs
 
 class ResizeExecutorRequest(Request):
-    inputs: Optional[ResizeExecutorInputs]
+    inputs: ResizeExecutorInputs
     configs: ResizeExecutorConfigs
 
     class Config:
