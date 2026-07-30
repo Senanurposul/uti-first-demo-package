@@ -54,7 +54,7 @@ class InputImageSecond(Input):
         title = "Second Image"
 
 class OutputImageSecond(Output):
-    name: Literal["outputImageSeond"] = "outputImageSecond"
+    name: Literal["outputImageSecond"] = "outputImageSecond"
     value: Union[List[Image], Image]
     type: str = "object"
 
@@ -289,7 +289,7 @@ class DifferenceExecutor(Config):
         title = "Difference Executor"
         json_schema_extra = {
             "target": {
-                "value": 0
+                "value": 1
             }
         }
 
