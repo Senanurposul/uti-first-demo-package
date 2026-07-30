@@ -4,9 +4,8 @@ from sdks.novavision.src.base.model import Package, Image, Inputs, Configs, Outp
 
 
 
-
-class InputImageTwo(Input):
-    name: Literal["inputImageTwo"] = "inputImageTwo"
+class InputImage(Input):
+    name: Literal["inputImage"] = "inputImage"
     value: Union[List[Image], Image]
     type: str = "object"
 
@@ -17,14 +16,13 @@ class InputImageTwo(Input):
             return "object"
         elif isinstance(value, list):
             return "list"
-        return "object"
 
     class Config:
         title = "Image"
 
 
-class InputImageOne(Input):
-    name: Literal["inputImageOne"] = "inputImageOne"
+class OutputImage(Output):
+    name: Literal["outputImage"] = "outputImage"
     value: Union[List[Image], Image]
     type: str = "object"
 
@@ -35,14 +33,12 @@ class InputImageOne(Input):
             return "object"
         elif isinstance(value, list):
             return "list"
-        return "object"
 
     class Config:
         title = "Image"
 
-
-class OutputImageTwo(Output):
-    name: Literal["outputImageTwo"] = "outputImageTwo"
+class InputImageSecond(Input):
+    name: Literal["inputImageSecond"] = "inputImageSecond"
     value: Union[List[Image], Image]
     type: str = "object"
 
@@ -53,14 +49,12 @@ class OutputImageTwo(Output):
             return "object"
         elif isinstance(value, list):
             return "list"
-        return "object"
 
     class Config:
-        title = "Image"
+        title = "Second Image"
 
-
-class OutputImageOne(Output):
-    name: Literal["outputImageOne"] = "outputImageOne"
+class OutputImageSecond(Output):
+    name: Literal["outputImageSeond"] = "outputImageSecond"
     value: Union[List[Image], Image]
     type: str = "object"
 
@@ -71,15 +65,13 @@ class OutputImageOne(Output):
             return "object"
         elif isinstance(value, list):
             return "list"
-        return "object"
 
     class Config:
-        title = "Image"
-
+        title = "Second Output Image"
 
 class ThresholdValue(Config):
     name: Literal["ThresholdValue"] = "ThresholdValue"
-    value: int = Field(default=127, ge=0, le=255)
+    value: int
     type: Literal["number"] = "number"
     field: Literal["textInput"] = "textInput"
 
@@ -117,16 +109,6 @@ class OptionDisable(Config):
         title = "Disable"
 
 
-class Invert(Config):
-    name: Literal["Invert"] = "Invert"
-    value: Union[OptionEnable, OptionDisable]
-    type: Literal["object"] = "object"
-    field: Literal["dropdownlist"] = "dropdownlist"
-
-    class Config:
-        title = "Invert"
-
-
 class NormalizeOutput(Config):
     name: Literal["NormalizeOutput"] = "NormalizeOutput"
     value: Union[OptionEnable, OptionDisable]
@@ -138,10 +120,10 @@ class NormalizeOutput(Config):
 
 
 class ThresholdMethod(Config):
-    thresholdValue: ThresholdValue
-    invert: Invert
-
     name: Literal["ThresholdMethod"] = "ThresholdMethod"
+
+    thresholdValue: ThresholdValue
+
     value: Literal["Threshold"] = "Threshold"
     type: Literal["string"] = "string"
     field: Literal["option"] = "option"
@@ -151,10 +133,11 @@ class ThresholdMethod(Config):
 
 
 class NormalizeMethod(Config):
+    name: Literal["NormalizeMethod"] = "NormalizeMethod"
+
     alpha: Alpha
     normalizeOutput: NormalizeOutput
 
-    name: Literal["NormalizeMethod"] = "NormalizeMethod"
     value: Literal["Normalize"] = "Normalize"
     type: Literal["string"] = "string"
     field: Literal["option"] = "option"
@@ -170,50 +153,7 @@ class DifferenceMethod(Config):
     field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
 
     class Config:
-        title = "Method"
-
-
-class DifferenceExecutorInputs(Inputs):
-    inputImageOne: InputImageOne
-    inputImageTwo: InputImageTwo
-
-
-class DifferenceExecutorConfigs(Configs):
-    differenceMethod: DifferenceMethod
-
-
-class DifferenceExecutorRequest(Request):
-    inputs: Optional[DifferenceExecutorInputs]
-    configs: DifferenceExecutorConfigs
-
-    class Config:
-        json_schema_extra = {
-            "target": "configs"
-        }
-
-
-class DifferenceExecutorOutputs(Outputs):
-    outputImageOne: OutputImageOne
-    outputImageTwo: OutputImageTwo
-
-
-class DifferenceExecutorResponse(Response):
-    outputs: DifferenceExecutorOutputs
-
-
-class DifferenceExecutor(Config):
-    name: Literal["DifferenceExecutor"] = "DifferenceExecutor"
-    value: Union[DifferenceExecutorRequest, DifferenceExecutorResponse]
-    type: Literal["object"] = "object"
-    field: Literal["option"] = "option"
-
-    class Config:
-        title = "DifferenceExecutor"
-        json_schema_extra = {
-            "target": {
-                "value": 1
-            }
-        }
+        title = "Difference Method"
 
 
 class ScaleX(Config):
@@ -294,13 +234,41 @@ class ResizeMethod(Config):
         title = "Resize Method"
 
 
-class ResizeExecutorInputs(Inputs):
-    inputImageOne: InputImageOne
+class DifferenceExecutorConfigs(Configs):
+    differenceMethod: DifferenceMethod
 
+class DifferenceExecutorInputs(Inputs):
+    inputImage: InputImage
+    inputImageSecond: InputImageSecond
 
 class ResizeExecutorConfigs(Configs):
     resizeMethod: ResizeMethod
 
+class ResizeExecutorInputs(Inputs):
+    inputImage: InputImage
+
+class DifferenceExecutorOutputs(Outputs):
+    outputImage: OutputImage
+    outputImageSecond: OutputImageSecond
+
+class ResizeExecutorOutputs(Outputs):
+    outputImage: OutputImage
+
+class DifferenceExecutorResponse(Response):
+    outputs: DifferenceExecutorOutputs
+
+class DifferenceExecutorRequest(Request):
+    inputs: Optional[DifferenceExecutorInputs]
+    configs: DifferenceExecutorConfigs
+
+    class Config:
+        json_schema_extra = {
+            "target": "configs"
+        }
+
+
+class ResizeExecutorResponse(Response):
+    outputs: ResizeExecutorOutputs
 
 class ResizeExecutorRequest(Request):
     inputs: Optional[ResizeExecutorInputs]
@@ -311,14 +279,19 @@ class ResizeExecutorRequest(Request):
             "target": "configs"
         }
 
+class DifferenceExecutor(Config):
+    name: Literal["DifferenceExecutor"] = "DifferenceExecutor"
+    value: Union[DifferenceExecutorRequest, DifferenceExecutorResponse]
+    type: Literal["object"] = "object"
+    field: Literal["option"] = "option"
 
-class ResizeExecutorOutputs(Outputs):
-    outputImageOne: OutputImageOne
-
-
-class ResizeExecutorResponse(Response):
-    outputs: ResizeExecutorOutputs
-
+    class Config:
+        title = "Difference Executor"
+        json_schema_extra = {
+            "target": {
+                "value": 0
+            }
+        }
 
 class ResizeExecutor(Config):
     name: Literal["ResizeExecutor"] = "ResizeExecutor"
@@ -327,7 +300,7 @@ class ResizeExecutor(Config):
     field: Literal["option"] = "option"
 
     class Config:
-        title = "ResizeExecutor"
+        title = "Resize Executor"
         json_schema_extra = {
             "target": {
                 "value": 0
