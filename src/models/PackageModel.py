@@ -54,7 +54,7 @@ class InputImageSecond(Input):
         title = "Second Image"
 
 class OutputImageSecond(Output):
-    name: Literal["outputImageSecond"] = "outputImageSecond"
+    name: Literal["outputImageSeond"] = "outputImageSecond"
     value: Union[List[Image], Image]
     type: str = "object"
 
@@ -258,7 +258,7 @@ class DifferenceExecutorResponse(Response):
     outputs: DifferenceExecutorOutputs
 
 class DifferenceExecutorRequest(Request):
-    inputs: DifferenceExecutorInputs
+    inputs: Optional[DifferenceExecutorInputs]
     configs: DifferenceExecutorConfigs
 
     class Config:
@@ -271,7 +271,7 @@ class ResizeExecutorResponse(Response):
     outputs: ResizeExecutorOutputs
 
 class ResizeExecutorRequest(Request):
-    inputs: ResizeExecutorInputs
+    inputs: Optional[ResizeExecutorInputs]
     configs: ResizeExecutorConfigs
 
     class Config:
@@ -289,7 +289,7 @@ class DifferenceExecutor(Config):
         title = "Difference Executor"
         json_schema_extra = {
             "target": {
-                "value": 1
+                "value": 0
             }
         }
 
