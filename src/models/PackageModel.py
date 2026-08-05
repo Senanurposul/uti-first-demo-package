@@ -1,11 +1,9 @@
 from pydantic import Field, validator
-from typing import List, Optional, Union, Literal
+from typing import List, Union, Literal, Optional
 from sdks.novavision.src.base.model import Package, Image, Inputs, Configs, Outputs, Response, Request, Output, Input, Config
 
-
-
-class InputImage(Input):
-    name: Literal["inputImage"] = "inputImage"
+class InputImageOne(Input):
+    name: Literal["inputImageOne"] = "inputImageOne"
     value: Union[List[Image], Image]
     type: str = "object"
 
@@ -16,13 +14,14 @@ class InputImage(Input):
             return "object"
         elif isinstance(value, list):
             return "list"
+        return "object"
 
     class Config:
-        title = "Image"
+        title = "Image Input 1"
 
 
-class OutputImage(Output):
-    name: Literal["outputImage"] = "outputImage"
+class InputImageTwo(Input):
+    name: Literal["inputImageTwo"] = "inputImageTwo"
     value: Union[List[Image], Image]
     type: str = "object"
 
@@ -33,12 +32,14 @@ class OutputImage(Output):
             return "object"
         elif isinstance(value, list):
             return "list"
+        return "object"
 
     class Config:
-        title = "Image"
+        title = "Image Input 2"
 
-class InputImageSecond(Input):
-    name: Literal["inputImageSecond"] = "inputImageSecond"
+
+class OutputImageOne(Output):
+    name: Literal["outputImageOne"] = "outputImageOne"
     value: Union[List[Image], Image]
     type: str = "object"
 
@@ -49,12 +50,14 @@ class InputImageSecond(Input):
             return "object"
         elif isinstance(value, list):
             return "list"
+        return "object"
 
     class Config:
-        title = "Second Image"
+        title = "Result Output Image 1"
 
-class OutputImageSecond(Output):
-    name: Literal["outputImageSeond"] = "outputImageSecond"
+
+class OutputImageTwo(Output):
+    name: Literal["outputImageTwo"] = "outputImageTwo"
     value: Union[List[Image], Image]
     type: str = "object"
 
@@ -65,32 +68,23 @@ class OutputImageSecond(Output):
             return "object"
         elif isinstance(value, list):
             return "list"
+        return "object"
 
     class Config:
-        title = "Second Output Image"
+        title = "Result Output Image 2"
 
-class ThresholdValue(Config):
-    name: Literal["ThresholdValue"] = "ThresholdValue"
-    value: int
+class OptionAIntegerField(Config):
+    name: Literal["optionAIntegerField"] = "optionAIntegerField"
+    value: int = Field(default=10)
     type: Literal["number"] = "number"
     field: Literal["textInput"] = "textInput"
 
     class Config:
-        title = "Threshold Value"
+        title = "Integer Field for A"
 
 
-class Alpha(Config):
-    name: Literal["Alpha"] = "Alpha"
-    value: float
-    type: Literal["number"] = "number"
-    field: Literal["textInput"] = "textInput"
-
-    class Config:
-        title = "Alpha"
-
-
-class OptionEnable(Config):
-    name: Literal["OptionEnable"] = "OptionEnable"
+class BoolOptionTrue(Config):
+    name: Literal["True"] = "True"
     value: Literal[True] = True
     type: Literal["bool"] = "bool"
     field: Literal["option"] = "option"
@@ -99,8 +93,8 @@ class OptionEnable(Config):
         title = "Enable"
 
 
-class OptionDisable(Config):
-    name: Literal["OptionDisable"] = "OptionDisable"
+class BoolOptionFalse(Config):
+    name: Literal["False"] = "False"
     value: Literal[False] = False
     type: Literal["bool"] = "bool"
     field: Literal["option"] = "option"
@@ -109,198 +103,150 @@ class OptionDisable(Config):
         title = "Disable"
 
 
-class NormalizeOutput(Config):
-    name: Literal["NormalizeOutput"] = "NormalizeOutput"
-    value: Union[OptionEnable, OptionDisable]
+class OptionABoolField(Config):
+    name: Literal["optionABoolField"] = "optionABoolField"
+    value: Union[BoolOptionTrue, BoolOptionFalse]
     type: Literal["object"] = "object"
     field: Literal["dropdownlist"] = "dropdownlist"
 
     class Config:
-        title = "Normalize Output"
-
-
-class ThresholdMethod(Config):
-    name: Literal["ThresholdMethod"] = "ThresholdMethod"
-
-    thresholdValue: ThresholdValue
-
-    value: Literal["Threshold"] = "Threshold"
-    type: Literal["string"] = "string"
-    field: Literal["option"] = "option"
-
-    class Config:
-        title = "Threshold"
-
-
-class NormalizeMethod(Config):
-    name: Literal["NormalizeMethod"] = "NormalizeMethod"
-
-    alpha: Alpha
-    normalizeOutput: NormalizeOutput
-
-    value: Literal["Normalize"] = "Normalize"
-    type: Literal["string"] = "string"
-    field: Literal["option"] = "option"
-
-    class Config:
-        title = "Normalize"
-
-
-class DifferenceMethod(Config):
-    name: Literal["DifferenceMethod"] = "DifferenceMethod"
-    value: Union[ThresholdMethod, NormalizeMethod]
-    type: Literal["object"] = "object"
-    field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
-
-    class Config:
-        title = "Difference Method"
-
-
-class ScaleX(Config):
-    name: Literal["ScaleX"] = "ScaleX"
-    value: float
-    type: Literal["number"] = "number"
-    field: Literal["textInput"] = "textInput"
-
-    class Config:
-        title = "Scale X"
-
-
-class ScaleY(Config):
-    name: Literal["ScaleY"] = "ScaleY"
-    value: float
-    type: Literal["number"] = "number"
-    field: Literal["textInput"] = "textInput"
-
-    class Config:
-        title = "Scale Y"
-
-
-class Width(Config):
-    name: Literal["Width"] = "Width"
-    value: int
-    type: Literal["number"] = "number"
-    field: Literal["textInput"] = "textInput"
-
-    class Config:
-        title = "Width"
-
-
-class Height(Config):
-    name: Literal["Height"] = "Height"
-    value: int
-    type: Literal["number"] = "number"
-    field: Literal["textInput"] = "textInput"
-
-    class Config:
-        title = "Height"
-
-
-class ConfigScale(Config):
-    name: Literal["ConfigScale"] = "ConfigScale"
-
-    scaleX: ScaleX
-    scaleY: ScaleY
-
-    value: Literal["Scale"] = "Scale"
-    type: Literal["string"] = "string"
-    field: Literal["option"] = "option"
-
-    class Config:
-        title = "Scale"
-
-
-class ConfigCustomSize(Config):
-    name: Literal["ConfigCustomSize"] = "ConfigCustomSize"
-
-    width: Width
-    height: Height
-
-    value: Literal["CustomSize"] = "CustomSize"
-    type: Literal["string"] = "string"
-    field: Literal["option"] = "option"
-
-    class Config:
-        title = "Custom Size"
-
-
-class ResizeMethod(Config):
-    name: Literal["ResizeMethod"] = "ResizeMethod"
-    value: Union[ConfigScale, ConfigCustomSize]
-    type: Literal["object"] = "object"
-    field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
-
-    class Config:
-        title = "Resize Method"
-
-
-class DifferenceExecutorConfigs(Configs):
-    differenceMethod: DifferenceMethod
-
-class DifferenceExecutorInputs(Inputs):
-    inputImage: InputImage
-    inputImageSecond: InputImageSecond
-
-class ResizeExecutorConfigs(Configs):
-    resizeMethod: ResizeMethod
-
-class ResizeExecutorInputs(Inputs):
-    inputImage: InputImage
-
-class DifferenceExecutorOutputs(Outputs):
-    outputImage: OutputImage
-    outputImageSecond: OutputImageSecond
-
-class ResizeExecutorOutputs(Outputs):
-    outputImage: OutputImage
-
-class DifferenceExecutorResponse(Response):
-    outputs: DifferenceExecutorOutputs
-
-class DifferenceExecutorRequest(Request):
-    inputs: Optional[DifferenceExecutorInputs]
-    configs: DifferenceExecutorConfigs
-
-    class Config:
-        json_schema_extra = {
-            "target": "configs"
-        }
-
-
-class ResizeExecutorResponse(Response):
-    outputs: ResizeExecutorOutputs
-
-class ResizeExecutorRequest(Request):
-    inputs: Optional[ResizeExecutorInputs]
-    configs: ResizeExecutorConfigs
-
-    class Config:
-        json_schema_extra = {
-            "target": "configs"
-        }
-
-class DifferenceExecutor(Config):
-    name: Literal["DifferenceExecutor"] = "DifferenceExecutor"
-    value: Union[DifferenceExecutorRequest, DifferenceExecutorResponse]
-    type: Literal["object"] = "object"
-    field: Literal["option"] = "option"
-
-    class Config:
-        title = "Difference Executor"
+        title = "Boolean Field for A"
         json_schema_extra = {
             "target": {
                 "value": 0
             }
         }
 
-class ResizeExecutor(Config):
-    name: Literal["ResizeExecutor"] = "ResizeExecutor"
-    value: Union[ResizeExecutorRequest, ResizeExecutorResponse]
+
+class OptionA(Config):
+    name: Literal["OptionA"] = "OptionA"
+    optionAIntegerField: OptionAIntegerField
+    optionABoolField: OptionABoolField
+    value: Literal["OptionA"] = "OptionA"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+
+    class Config:
+        title = "Method A"
+
+
+class OptionBFloatField(Config):
+    name: Literal["optionBFloatField"] = "optionBFloatField"
+    value: float = Field(default=1.5)
+    type: Literal["number"] = "number"
+    field: Literal["textInput"] = "textInput"
+
+    class Config:
+        title = "Float Field for B"
+
+
+class OptionBStringField(Config):
+    name: Literal["optionBStringField"] = "optionBStringField"
+    value: str = Field(default="default_string")
+    type: Literal["string"] = "string"
+    field: Literal["textInput"] = "textInput"
+
+    class Config:
+        title = "String Field for B"
+
+
+class OptionB(Config):
+    name: Literal["OptionB"] = "OptionB"
+    optionBFloatField: OptionBFloatField
+    optionBStringField: OptionBStringField
+    value: Literal["OptionB"] = "OptionB"
+    type: Literal["string"] = "string"
+    field: Literal["option"] = "option"
+
+    class Config:
+        title = "Method B"
+
+
+class DemoDependentDropdown(Config):
+    name: Literal["demoDependentDropdown"] = "demoDependentDropdown"
+    value: Union[OptionA, OptionB]
+    type: Literal["object"] = "object"
+    field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
+
+    class Config:
+        title = "Select Method"
+
+class GrayExecutorInputs(Inputs):
+    inputImageOne: InputImageOne
+
+
+class MixExecutorInputs(Inputs):
+    inputImageOne: InputImageOne
+    inputImageTwo: InputImageTwo
+
+
+class GrayExecutorConfigs(Configs):
+    demoDependentDropdown: DemoDependentDropdown
+
+
+class MixExecutorConfigs(Configs):
+    demoDependentDropdown: DemoDependentDropdown
+
+
+class GrayExecutorRequest(Request):
+    inputs: Optional[GrayExecutorInputs]
+    configs: GrayExecutorConfigs
+
+    class Config:
+        json_schema_extra = {
+            "target": "configs"
+        }
+
+
+class MixExecutorRequest(Request):
+    inputs: Optional[MixExecutorInputs]
+    configs: MixExecutorConfigs
+
+    class Config:
+        json_schema_extra = {
+            "target": "configs"
+        }
+
+
+class GrayExecutorOutputs(Outputs):
+    outputImageOne: OutputImageOne
+
+
+class MixExecutorOutputs(Outputs):
+    outputImageOne: OutputImageOne
+    outputImageTwo: OutputImageTwo
+
+
+class GrayExecutorResponse(Response):
+    outputs: GrayExecutorOutputs
+
+
+class MixExecutorResponse(Response):
+    outputs: MixExecutorOutputs
+
+class GrayExecutor(Config):
+    name: Literal["GrayExecutor"] = "GrayExecutor"
+    value: Union[GrayExecutorRequest, GrayExecutorResponse]
     type: Literal["object"] = "object"
     field: Literal["option"] = "option"
 
     class Config:
-        title = "Resize Executor"
+        title = "GrayExecutor"
+        json_schema_extra = {
+            "target": {
+                "value": 0
+            }
+        }
+
+
+class MixExecutor(Config):
+    name: Literal["MixExecutor"] = "MixExecutor"
+    value: Union[MixExecutorRequest, MixExecutorResponse]
+    type: Literal["object"] = "object"
+    field: Literal["option"] = "option"
+
+    class Config:
+        title = "MixExecutor"
         json_schema_extra = {
             "target": {
                 "value": 0
@@ -310,7 +256,7 @@ class ResizeExecutor(Config):
 
 class ConfigExecutor(Config):
     name: Literal["ConfigExecutor"] = "ConfigExecutor"
-    value: Union[ResizeExecutor, DifferenceExecutor]
+    value: Union[GrayExecutor, MixExecutor]
     type: Literal["executor"] = "executor"
     field: Literal["dependentDropdownlist"] = "dependentDropdownlist"
 
